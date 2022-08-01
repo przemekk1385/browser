@@ -13,7 +13,9 @@ const withBrowser = async (fn) => {
 };
 
 const withPage = (browser) => async (fn) => {
-  const page = await browser.newPage();
+  const page = await browser.newPage({
+    waitUntil: ["domcontentloaded", "networkidle0"],
+  });
   try {
     return await fn(page);
   } finally {
