@@ -32,23 +32,23 @@ app.get("/", async (req, res, next) => {
     res.status(400).json({ detail: "urls query parameter is required" });
   } else if (!Array.isArray(urls)) {
     res.status(400).json({ detail: "can't handle single URL" });
-  }
+  } else {
+    try {
+      const results = await withBrowser(async (browser) => {
+        return Promise.all(
+          urls.map(async (url) => {
+            return withPage(browser)(async (page) => {
+              await page.goto(url);
+              return { url, content: await page.content() };
+            });
+          })
+        );
+      });
 
-  try {
-    const results = await withBrowser(async (browser) => {
-      return Promise.all(
-        urls.map(async (url) => {
-          return withPage(browser)(async (page) => {
-            await page.goto(url);
-            return { url, content: await page.content() };
-          });
-        })
-      );
-    });
-
-    res.json(results);
-  } catch (err) {
-    next(err);
+      res.json(results);
+    } catch (err) {
+      next(err);
+    }
   }
 });
 
