@@ -1,5 +1,9 @@
+.DS_Store
+.dockerignore
+.gitignore
+Dockerfile
+Makefile*
+
 .git/
 .vscode/
 node_modules/
-
-Dockerfile
