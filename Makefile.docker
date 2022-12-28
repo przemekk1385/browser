@@ -9,8 +9,8 @@ docker/push:
 
 docker/push/arm64:
 	( \
-	docker build -t przemekk1385/browser:latest-amr64_v8 . ;\
-	docker push przemekk1385/browser:latest-amr64_v8 ;\
+	docker build -t przemekk1385/browser:latest-arm64_v8 . ;\
+	docker push przemekk1385/browser:latest-arm64_v8 ;\
 	)
 
 docker/rm:
