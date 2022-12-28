@@ -13,5 +13,11 @@ docker/push/arm64:
 	docker push przemekk1385/browser:latest-amr64_v8 ;\
 	)
 
+docker/rm:
+	docker rm browser
+
 docker/run:
-	docker run -p 3000:3000 -d browser
+	docker run -p 3000:3000 -d --name browser browser
+
+docker/stop:
+	docker stop browser
