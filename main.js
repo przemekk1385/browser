@@ -1,9 +1,7 @@
 // based on: https://advancedweb.hu/how-to-speed-up-puppeteer-scraping-with-parallelization/
-
-import { requireUrls } from "middleware";
-
 const express = require("express");
 const puppeteer = require("puppeteer");
+const { requireUrls } = require("./middleware");
 
 const withBrowser = async (fn) => {
   const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
@@ -28,7 +26,7 @@ const withPage = (browser) => async (fn) => {
 const app = express();
 
 app.get("/", requireUrls, async (req, res, next) => {
-  const {
+  let {
     query: { urls },
   } = req;
 
