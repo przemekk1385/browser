@@ -1,5 +1,7 @@
 // based on: https://advancedweb.hu/how-to-speed-up-puppeteer-scraping-with-parallelization/
 
+import { requireUrls } from "middleware";
+
 const express = require("express");
 const puppeteer = require("puppeteer");
 
@@ -25,30 +27,30 @@ const withPage = (browser) => async (fn) => {
 
 const app = express();
 
-app.get("/", async (req, res, next) => {
-  const { urls } = req.query;
+app.get("/", requireUrls, async (req, res, next) => {
+  const {
+    query: { urls },
+  } = req;
 
-  if (!urls) {
-    res.status(400).json({ detail: "urls query parameter is required" });
-  } else if (!Array.isArray(urls)) {
-    res.status(400).json({ detail: "can't handle single URL" });
-  } else {
-    try {
-      const results = await withBrowser(async (browser) => {
-        return Promise.all(
-          urls.map(async (url) => {
-            return withPage(browser)(async (page) => {
-              await page.goto(url);
-              return { url, content: await page.content() };
-            });
-          })
-        );
-      });
+  if (!Array.isArray(urls)) {
+    urls = [urls];
+  }
 
-      res.json(results);
-    } catch (err) {
-      next(err);
-    }
+  try {
+    const results = await withBrowser(async (browser) => {
+      return Promise.all(
+        urls.map(async (url) => {
+          return withPage(browser)(async (page) => {
+            await page.goto(url);
+            return { url, content: await page.content() };
+          });
+        })
+      );
+    });
+
+    res.json(results);
+  } catch (err) {
+    next(err);
   }
 });
 
